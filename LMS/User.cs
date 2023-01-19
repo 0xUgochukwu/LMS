@@ -22,6 +22,7 @@ namespace LMS
         public void login()
         {
              // Request username
+             // make passwords not visible 
         }
 
         public void logout()
