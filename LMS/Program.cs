@@ -6,7 +6,7 @@ namespace LMS
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hei");
+            Console.WriteLine("LMS Loading...");
         }
     }
 }
