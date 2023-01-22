@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Drawing;
+using Colorful;
+using Console = Colorful.Console;
 namespace LMS
 {
     abstract class User
@@ -21,7 +24,24 @@ namespace LMS
 
         public void login()
         {
+            Console.WriteLine("What's your User ID?");
+            string inputUserID = Console.ReadLine();
 
+
+            Console.Write("Enter your password:");
+            string inputPassword = "";
+
+            while (true) {
+                ConsoleKeyInfo inputKey = Console.ReadKey(true);
+
+                if (inputKey.Key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+
+                inputPassword += inputKey.KeyChar;
+                Console.Write("*");
+            }
         }
 
         public void logout()
