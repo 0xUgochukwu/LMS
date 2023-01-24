@@ -19,7 +19,7 @@ namespace LMS
             "\n      ___                   \n     /\\  \\                  \n    /::\\  \\                 \n   /:/\\:\\  \\                \n  /:/ /::\\  \\   ___     ___ \n /:/_/:/\\:\\__\\ /\\  \\   /\\__\\\n \\:\\/:/  \\/__/ \\:\\  \\ /:/  /\n  \\::/__/       \\:\\  /:/  / \n   \\:\\  \\        \\:\\/:/  /  \n    \\:\\__\\        \\::/  /   \n     \\/__/         \\/__/    \n",
             "\n      ___           ___ \n     /\\  \\         /\\__\\\n    /::\\  \\       /:/  /\n   /:/\\:\\  \\     /:/  / \n  /::\\~\\:\\  \\   /:/  /  \n /:/\\:\\ \\:\\__\\ /:/__/   \n \\/__\\:\\/:/  / \\:\\  \\   \n      \\::/  /   \\:\\  \\  \n      /:/  /     \\:\\  \\ \n     /:/  /       \\:\\__\\\n     \\/__/         \\/__/\n"
         };
-        static string[,] sequence = sequence = new string[,] {
+        static string[,] sequence = new string[,] {
                 { "/", "-", "\\", "|" },
                 { ".   ", "..  ", "... ", "...." },
                 { "=>   ", "==>  ", "===> ", "====>" },
@@ -36,6 +36,30 @@ namespace LMS
 
         }
 
+        public static void LoadBooks()
+        {
+            string[,] books = new string[,]
+            {
+                {"Pride and Prejudice", "Jane Austen"},
+                {"The Red and the Black", "Stendhal"},
+                {"Sands of Time", "Sydney Sheldon"},
+                {"Chasing Red", "NicoleWrites"},
+                {"Midnight Bayou", "Nora Roberts" },
+                {"Wuthering Heights", "Emily Bronte"},
+                {"Harry Porter and Sorcere's Stone", "J.K Rowling"},
+                {"Robinson Crusoe", "Daniel Defoe"},
+                {"Gulliver's Travels", "Jonathan Smith"},
+                {"hings Fall Apart", "Chinua Achebe"},
+            };
+
+
+            for (int i = 0; i < books.GetLength(0); i++)
+            {
+                Book book = new Book(books[i, 0], books[i, 1]);
+                User.books.Add(book.ID, book);
+            }
+
+        }
 
         static public void AnimateLogo(int j = 20)
         {
@@ -206,7 +230,7 @@ namespace LMS
         public static void ShowSuccess(string successMsg)
         {
             Clear();
-            TypeLineL(successMsg, color: Color.Green);
+            TypeLine(successMsg, color: Color.Green);
 
         }
 
@@ -226,7 +250,8 @@ namespace LMS
             Console.Write(option, Color.Blue);
             Console.Write($" ]  ");
 
-            Console.Write(message + "\n");
+            Console.Write(message);
+            Console.Write(".\n", Color.Blue);
 
         }
 
@@ -675,7 +700,7 @@ namespace LMS
                 string address = Console.ReadLine();
 
                 TypeLine("Enter your preferred Password: ", Color.Blue);
-                string password = getPassword();
+                string password = getPassword(false);
 
 
                 UI.Load(times: new Random().Next(50, 150), displayMsg: "Creating your Client Account...", sequenceCode: 0);

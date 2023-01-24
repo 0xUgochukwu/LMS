@@ -15,19 +15,10 @@ namespace LMS
         static void Main(string[] args)
         {
 
+            UI.LoadBooks();
+            UI.GeneralMenu();
 
-            //UI.GeneralMenu();
 
-            string password = UI.getPassword();
-
-            if (password == "1234")
-            {
-                UI.Escape(); UI.TypeLine("Okay", Color.Green);
-            }
-            else
-            {
-                UI.Escape(); UI.throwError("Wrong");
-            }
 
         }
     }

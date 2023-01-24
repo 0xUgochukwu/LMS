@@ -33,7 +33,7 @@ namespace LMS
 
         static public void login(bool isAdmin)
         {
-            UI.TypeLine("What's your User ID?", Color.Blue);
+            UI.TypeLine("What's your User ID? ", Color.Blue);
             string inputUserID = Console.ReadLine();
 
             if (isAdmin)
@@ -104,7 +104,7 @@ namespace LMS
                 if (inputPassword == admins[userID].password)
                 {
                     UI.AnimateLogo(); UI.ProgressBar();
-                    UI.TypeLine($" {admins[userID].firstName} you have Successfully" +
+                    UI.ShowSuccess($" {admins[userID].firstName} you have Successfully" +
                         $" Logged out of your account");
                     logs.Add(new Log($"Admin: {userID} Logged Out", userID, true));
                     UI.GeneralMenu();
@@ -121,7 +121,7 @@ namespace LMS
                 if (inputPassword == clients[userID].password)
                 {
                     UI.AnimateLogo(); UI.ProgressBar();
-                    UI.TypeLine($" {clients[userID].firstName} you have Successfully" +
+                    UI.ShowSuccess($" {clients[userID].firstName} you have Successfully" +
                         $" Logged out of your account");
                     logs.Add(new Log($"Client: {userID} Logged Out", userID, true));
                     UI.GeneralMenu();
@@ -135,23 +135,23 @@ namespace LMS
         }
 
 
-
         public void listBooksInventory()
         {
             UI.Escape(); UI.TypeLine($"======= HERE ARE ALL THE BOOKS IN THE INVENTORY ======", Color.DarkBlue); UI.Escape();
             foreach (Book book in books.Values)
             {
-                string bookCondition = book.isBorrowed ? "Available" : "Borrowed";
-                UI.TypeLine($"ID {book.ID}", sleepTime: 20);
+                string bookCondition = book.isBorrowed ? "Borrowed" : "Available";
+                UI.TypeLine($"ID: {book.ID}", sleepTime: 20);
                 UI.TypeLine(" || ", color: Color.Blue, sleepTime: 20);
-                UI.TypeLine($"Name: {book.name}", sleepTime: 20);
+                UI.TypeLine($"Title: {book.name}", sleepTime: 20);
                 UI.TypeLine(" || ", color: Color.Blue, sleepTime: 20);
                 UI.TypeLine($"Book Author: {book.author}", sleepTime: 20);
                 UI.TypeLine(" || ", color: Color.Blue, sleepTime: 20);
                 UI.TypeLine($"Registration TimeStamp: {book.regDateTime}", sleepTime: 20);
                 UI.TypeLine(" || ", color: Color.Blue, sleepTime: 20);
-                UI.TypeLine($"Condition {bookCondition}", book.isBorrowed ? Color.Red : Color.Green, sleepTime: 20);
-                Console.WriteLine("----------------------------------------------------------", Color.Blue);
+                UI.TypeLine($"Condition: {bookCondition}", book.isBorrowed ? Color.Red : Color.Green, sleepTime: 20);
+                UI.Escape();
+                Console.WriteLine("--------------------------------------------------------------------------------------------------------------------", Color.Blue);
                 
             }
 
@@ -167,25 +167,27 @@ namespace LMS
 
             if (books.ContainsKey(bookID))
             {
+                
+                UI.Load(times: new Random().Next(50, 70), displayMsg: "Getting Book from Inventory", sequenceCode: 1);
+                UI.ProgressBar(displayMsg: "Loading Book Details....", interval: new Random().Next(30, 70));
+
                 UI.Escape(); UI.TypeLine($"======= HERE ARE {bookID}'S DETAILS ======", Color.DarkBlue); UI.Escape();
-                UI.Load(times: new Random().Next(50, 150), displayMsg: "Getting Book from Inventory...", sequenceCode: 1);
-                UI.ProgressBar(displayMsg: "Loading Book Details....", interval: new Random().Next(100, 200));
                 Book book = books[bookID];
-                string bookCondition = book.isBorrowed ? "Available" : "Borrowed";
+                string bookCondition = book.isBorrowed ? "Borrowed" : "Available";
 
 
-                UI.TypeLine($"ID {book.ID}\n", sleepTime: 20);
-                UI.TypeLine($"Name: {book.name}\n", sleepTime: 20);
+                UI.TypeLine($"ID: {book.ID}\n", sleepTime: 20);
+                UI.TypeLine($"Title: {book.name}\n", sleepTime: 20);
                 UI.TypeLine($"Book Author: {book.author}\n", sleepTime: 20);
                 UI.TypeLine($"Registration TimeStamp: {book.regDateTime}\n", sleepTime: 20);
-                UI.TypeLine($"Condition {bookCondition}\n", book.isBorrowed ? Color.Red : Color.Green, sleepTime: 20);
+                UI.TypeLine($"Condition: {bookCondition}\n", book.isBorrowed ? Color.Red : Color.Green, sleepTime: 20);
 
                 if (book.isBorrowed)
                 {
                     UI.TypeLine($"Due to Return On: {book.dueDate}");
                 }
-
-                Console.WriteLine("----------------------------------------------------------", Color.Blue);
+                UI.Escape();
+                Console.WriteLine("--------------------------------------------------------------------------------------------------------------------", Color.Blue);
                 logs.Add(new Log($"Viewed Book: {bookID}", this.userID, true));
                 return;
             }
