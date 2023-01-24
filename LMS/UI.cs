@@ -39,14 +39,16 @@ namespace LMS
 
         static public void AnimateLogo(int j = 20)
         {
-           
 
+            Console.Clear();
             for (int i = 0; i <= j; i++)
             {
                 Console.Write(logos[i % 4], i % 2 == 0 ? Color.Blue : Color.White);
                 Thread.Sleep(500);
                 Console.Clear();
             }
+
+            Clear();
 
         }
 
@@ -83,7 +85,7 @@ namespace LMS
 
         static public void Load(int times, string displayMsg = "", int sequenceCode = 0, Color? color = null)
         {
-            Clear();
+            Console.Clear();
             TypeLineL(displayMsg);
             Clear();
 
@@ -103,7 +105,7 @@ namespace LMS
         static public void Load2(int times, string displayMsg = "", int sequenceCode = 0)
         {
             Clear();
-            TypeLineL(displayMsg);
+            TypeLine(displayMsg);
             Clear();
             int timesCheck = 0;
             while (timesCheck++ < times + displayMsg.Length)
@@ -155,12 +157,17 @@ namespace LMS
                     
                 }
             }
+
+            Clear();
         }
 
 
-        public static string getPassword()
+        public static string getPassword(bool needText = true)
         {
-            TypeLineL("Enter your password: ");
+            if(needText)
+            {
+                TypeLine("Enter your password: ", Color.Blue);
+            }
             string inputPassword = "";
 
             while (true)
@@ -172,9 +179,17 @@ namespace LMS
                     break;
                 }
 
+                if (inputKey.Key == ConsoleKey.Backspace && inputPassword.Length > 0)
+                {
+                    inputPassword = inputPassword.Remove(inputPassword.Length - 1);
+                    Console.Write("\b \b");
+                    continue;
+                }
+
                 inputPassword += inputKey.KeyChar;
                 Console.Write("*");
             }
+            Escape();
 
             return inputPassword;
         }
@@ -183,8 +198,7 @@ namespace LMS
         
         public static void throwError(string errorMsg)
         {
-            Clear();
-            TypeLineL(errorMsg, color: Color.Red);
+            TypeLine(errorMsg, color: Color.Red);
 
         }
 
@@ -206,9 +220,476 @@ namespace LMS
             throwError("Invalid Password...");
         }
 
-        public static void GeneralMenu() { }
-        public static void ClientMenu(Client client) { }
-        public static void AdminMenu(Admin admin) { }
+        static public void menuOption(int option, string message)
+        {
+            Console.Write($"[ ");
+            Console.Write(option, Color.Blue);
+            Console.Write($" ]  ");
+
+            Console.Write(message + "\n");
+
+        }
+
+        public static void Welcome()
+        {
+            Console.Clear();
+            TypeLogo();
+            Console.Clear();
+            AnimateLogo(10);
+            //Clear();
+            //AnimateLogo();
+            TypeLine("Welcome to Aptech Library\nHow do you want to proceed?", Color.DarkBlue); Escape();
+        }
+
+        public static void displayOptions(string[] options)
+        {
+            Console.WriteLine("\n---------------------------------------------", Color.Blue);
+            for (int i = 0; i < options.GetLength(0); i++)
+            {
+                menuOption(i + 1, options[i]);
+            }
+            Console.WriteLine("---------------------------------------------\n", Color.Blue);
+        }
+
+        public static void GeneralMenu()
+        {
+            int choice = 0;
+            bool displayed = false;
+
+            
+
+            if (!displayed)
+            {
+                Welcome();
+                displayed = true;
+            }
+
+            string[] options = { "Proceed As An Admin", "Proceed As A User", "Close App" };
+            displayOptions(options);
+
+            try {
+                choice = Convert.ToInt32(Console.ReadLine());
+            }
+            catch
+            {
+                throwError("You entered an invalid input");
+                GeneralMenu();
+                
+            }
+
+            switch (choice)
+            {
+                case 1:
+                    Clear();
+                    AnimateLogo(4);
+                    InitialMenu(true);
+                    break;
+                case 2:
+                    Clear();
+                    AnimateLogo(4);
+                    InitialMenu(false);
+                    break;
+                case 3:
+                    Clear();
+                    AnimateLogo(4);
+                    TypeLine("Closing Aptech Library ......");
+                    Environment.Exit(0);
+                    break;
+                default:
+                    TypeLine("You entered a wrong Value, Try Again", Color.Red);
+                    GeneralMenu();
+                    break;
+
+
+
+
+            }
+        }
+
+        public static void InitialMenu(bool isAdmin)
+        {
+            int choice = 0;
+
+           
+
+            string[] options = { "Create An Account", "Login", "Go Back" };
+            displayOptions(options);
+
+            try
+            {
+                choice = Convert.ToInt32(Console.ReadLine());
+            }
+            catch
+            {
+                throwError("You entered an invalid input");
+                InitialMenu(isAdmin ? true: false) ;
+
+            }
+
+            switch (choice)
+            {
+                case 1:
+                    Clear();
+                    AnimateLogo(4);
+                    UI.CreateAccount(isAdmin);
+                    break;
+                case 2:
+                    Clear();
+                    AnimateLogo(4);
+                    User.login(isAdmin);
+                    break;
+                case 3:
+                    Clear();
+                    AnimateLogo(4);
+                    GeneralMenu();
+                    break;
+
+                default:
+                    Clear();
+                    AnimateLogo(4);
+                    throwError("You entered a wrong Value, Try Again");
+                    InitialMenu(isAdmin);
+                    break;
+
+
+
+
+            }
+        }
+
+
+        public static void Greet(string name)
+        {
+            Escape();
+            TypeLine($"Hello {name}, What would you like to do next?", Color.DarkBlue);
+        }
+
+        public static void ClientMenu(Client client)
+        {
+            int choice = 0;
+
+            
+
+            Greet(client.firstName); Escape();
+
+            string[] options = {
+                "See Book Inventory",
+                "View A Book",
+                "Display Your Account Details",
+                "Borrow A Book",
+                "List Books In Your Possession",
+                "Return A Book",
+                "Request A Book",
+                "Log Out"
+            };
+            displayOptions(options);
+
+            try
+            {
+                choice = Convert.ToInt32(Console.ReadLine());
+            }
+            catch
+            {
+                throwError("You entered an invalid input");
+                ClientMenu(client);
+
+            }
+
+            switch (choice)
+            {
+                case 1:
+                    Clear();
+                    AnimateLogo(4);
+                    client.listBooksInventory();
+                    ClientMenu(client);
+                    break;
+                case 2:
+                    Clear();
+                    AnimateLogo(4);
+                    client.viewBook();
+                    ClientMenu(client);
+                    break;
+                case 3:
+                    Clear();
+                    AnimateLogo(4);
+                    client.displayPersonalDetails();
+                    ClientMenu(client);
+                    break;
+                case 4:
+                    Clear();
+                    AnimateLogo(4);
+                    client.borrowBook();
+                    ClientMenu(client);
+                    break;
+                case 5:
+                    Clear();
+                    AnimateLogo(4);
+                    client.listBooksInPossession();
+                    ClientMenu(client);
+                    break;
+                case 6:
+                    Clear();
+                    AnimateLogo(4);
+                    client.returnBook();
+                    ClientMenu(client);
+                    break;
+                case 7:
+                    Clear();
+                    AnimateLogo(4);
+                    client.requestABook();
+                    ClientMenu(client);
+                    break;
+                case 8:
+                    Clear();
+                    AnimateLogo(4);
+                    client.logout(client.userID, false);
+                    break;
+                default:
+                    Clear();
+                    AnimateLogo(4);
+                    throwError("You entered a wrong Value, Try Again");
+                    ClientMenu(client);
+                    break;
+
+            }
+        }
+
+
+        public static void AdminMenu(Admin admin)
+        {
+            int choice = 0;
+
+
+
+
+            Greet(admin.firstName); Escape();
+
+            string[] options = {
+                "Display Your Account Details",
+                "List All Books In the Inventory",
+                "List Borrowed Books",
+                "List Clients",
+                "List Admins",
+                "View Client",
+                "View Admin",
+                "View Book",
+                "Edit Book",
+                "Add New Book",
+                "Delete Book",
+                "Restrict Client",
+                "Release Client",
+                "Delete Client",
+                "Delete Admin",
+                "View Book Requests",
+                "View Library Logs",
+                "Log Out"
+            };
+            displayOptions(options);
+
+            try
+            {
+                choice = Convert.ToInt32(Console.ReadLine());
+            }
+            catch
+            {
+                throwError("You entered an invalid input");
+                AdminMenu(admin);
+
+            }
+
+            switch (choice)
+            {
+                case 1:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.displayPersonalDetails();
+                    AdminMenu(admin);
+                    break;
+                case 2:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.listBooksInventory();
+                    AdminMenu(admin);
+                    break;
+                case 3:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.listBorrowedBooks();
+                    AdminMenu(admin);
+                    break;
+                case 4:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.listClients();
+                    AdminMenu(admin);
+                    break;
+                case 5:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.listAdmins();
+                    AdminMenu(admin);
+                    break;
+                case 6:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.displayClientDetails();
+                    AdminMenu(admin);
+                    break;
+                case 7:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.displayAdminDetails();
+                    AdminMenu(admin);
+                    break;
+                case 8:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.viewBook();
+                    AdminMenu(admin);
+                    break;
+                case 9:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.modifyBook();
+                    AdminMenu(admin);
+                    break;
+                case 10:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.addBook();
+                    AdminMenu(admin);
+                    break;
+                case 11:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.deleteBook();
+                    AdminMenu(admin);
+                    break;
+                case 12:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.restrictClient();
+                    AdminMenu(admin);
+                    break;
+                case 13:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.releaseClient();
+                    AdminMenu(admin);
+                    break;
+                case 14:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.deleteClient();
+                    AdminMenu(admin);
+                    break;
+                case 15:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.deleteAdmin();
+                    AdminMenu(admin);
+                    break;
+                case 16:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.viewBookRequests();
+                    AdminMenu(admin);
+                    break;
+                case 17:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.seeLogs();
+                    AdminMenu(admin);
+                    break;
+                case 18:
+                    Clear();
+                    AnimateLogo(4);
+                    admin.logout(admin.userID, true);
+                    AdminMenu(admin);
+                    break;
+                default:
+                    Clear();
+                    AnimateLogo(4);
+                    throwError("You entered a wrong Value, Try Again");
+                    AdminMenu(admin);
+                    break;
+
+            }
+        }
+
+
+
+        public static void CreateAccount(bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                TypeLine("What is your First Name? ", Color.Blue);
+                string firstName =  Console.ReadLine();
+
+                TypeLine("What is your Last Name? ", Color.Blue);
+                string lastName = Console.ReadLine();
+
+                TypeLine("How old are you? ", Color.Blue);
+                string age = Console.ReadLine();
+
+                TypeLine("What is your house address? ", Color.Blue);
+                string address = Console.ReadLine();
+
+                TypeLine("Enter the Admin Pass: ", Color.Blue);
+                string adminPass = getPassword(false); Escape();
+
+                if (adminPass != "0000")
+                {
+                    throwError("Wrong Admin Pass \nYou can't create an Admin Account \nTry Creating A User Account Instead");
+                    GeneralMenu();
+                }
+
+                TypeLine("Enter your preferred Password: ", Color.Blue);
+                string password = getPassword(false);
+
+
+
+                UI.Load(times: new Random().Next(50, 150), displayMsg: "Creating your Admin Account...", sequenceCode: 0);
+                UI.ProgressBar(displayMsg: "Loading your Account....", interval: new Random().Next(100, 200));
+
+                Admin admin = new Admin(firstName, lastName, age, address, password);
+
+                User.admins.Add(admin.userID, admin);
+
+                Clear();
+                AdminMenu(admin);
+            }
+
+            else
+            {
+                TypeLine("What is your First Name? ", Color.Blue);
+                string firstName = Console.ReadLine();
+
+                TypeLine("What is your Last Name? ", Color.Blue);
+                string lastName = Console.ReadLine();
+
+                TypeLine("How old are you? ", Color.Blue);
+                string age = Console.ReadLine();
+
+                TypeLine("What is your house address? ", Color.Blue);
+                string address = Console.ReadLine();
+
+                TypeLine("Enter your preferred Password: ", Color.Blue);
+                string password = getPassword();
+
+
+                UI.Load(times: new Random().Next(50, 150), displayMsg: "Creating your Client Account...", sequenceCode: 0);
+                UI.ProgressBar(displayMsg: "Loading your Account....", interval: new Random().Next(100, 200));
+
+                Client client = new Client(firstName, lastName, age, address, password);
+
+                User.clients.Add(client.userID, client);
+
+                ClientMenu(client);
+            }
+        }
+
     }
+    
 }
 

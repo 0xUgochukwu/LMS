@@ -9,31 +9,34 @@ namespace LMS
     {
         public string firstName;
         public string lastName;
-        public int age;
+        public string age;
         public string userID;
         protected string password;
+        public string address;
         static public Dictionary<string, Admin> admins = new Dictionary<string, Admin>();
         static public Dictionary<string, Client> clients = new Dictionary<string, Client>();
         static public Dictionary<string, Book> books = new Dictionary<string, Book>();
+        static public List<Book> BorrowedBooks = new List<Book>();
         static public Dictionary<string, Client> restrictedClients = new Dictionary<string, Client>();
         static public List<Request> requestedBooks = new List<Request>();
         static public List<Log> logs = new List<Log>();
 
 
-        public User(string firstName, string lastName, int age, string password)
+        public User(string firstName, string lastName, string age, string address, string password)
         {
             this.firstName = firstName;
             this.lastName = lastName;
             this.age = age;
             this.password = password;
+            this.address = address;
         }
 
-        static public User login()
+        static public void login(bool isAdmin)
         {
-            UI.TypeLine("What's your User ID?");
+            UI.TypeLine("What's your User ID?", Color.Blue);
             string inputUserID = Console.ReadLine();
 
-            if (inputUserID.Substring(0, 2) == "AD")
+            if (isAdmin)
             {
                 if (admins.ContainsKey(inputUserID))
                 {
@@ -43,18 +46,21 @@ namespace LMS
 
                     if (inputPassword == admins[inputUserID].password)
                     {
-                        return admins[inputUserID];
+                        logs.Add(new Log($"Admin {inputUserID} Logged In", inputUserID, true));
+                        UI.AdminMenu(admins[inputUserID]);
                     }
                     else
                     {
+                        logs.Add(new Log($"Admin {inputUserID} Logged In", inputUserID, false));
                         UI.throwError("Invalid Password...");
-                        return null;
+                        UI.InitialMenu(isAdmin);
                     }
                 }
                 else
                 {
+                    logs.Add(new Log($"Admin {inputUserID} Logged In", inputUserID, false));
                     UI.throwError("The UserID you entered does not exist");
-                    return null;
+                    UI.InitialMenu(isAdmin);
                 }
             }
             else
@@ -67,18 +73,21 @@ namespace LMS
 
                     if (inputPassword == clients[inputUserID].password)
                     {
-                        return clients[inputUserID];
+                        logs.Add(new Log($"Client {inputUserID} Logged In", inputUserID, true));
+                        UI.ClientMenu(clients[inputUserID]);
                     }
                     else
                     {
+                        logs.Add(new Log($"Client {inputUserID} Logged In", inputUserID, false));
                         UI.throwError("Invalid Password...");
-                        return null;
+                        UI.InitialMenu(isAdmin);
                     }
                 }
                 else
                 {
+                    logs.Add(new Log($"Client {inputUserID} Logged In", inputUserID, false));
                     UI.throwError("The UserID you entered does not exist");
-                    return null;
+                    UI.InitialMenu(isAdmin);
                 }
 
 
@@ -86,21 +95,42 @@ namespace LMS
             
         }
 
-        public void logout(string userID)
+        public void logout(string userID, bool isAdmin)
         {
             string inputPassword = UI.getPassword();
 
-            if (inputPassword == admins[userID].password || inputPassword == clients[userID].password)
+            if(isAdmin)
             {
-                UI.AnimateLogo(); UI.ProgressBar();
-                UI.TypeLine($" {admins[userID].firstName ?? clients[userID].firstName} you have Successfully" +
-                    $" Logged out of your account");
-                UI.Clear(); UI.GeneralMenu();
+                if (inputPassword == admins[userID].password)
+                {
+                    UI.AnimateLogo(); UI.ProgressBar();
+                    UI.TypeLine($" {admins[userID].firstName} you have Successfully" +
+                        $" Logged out of your account");
+                    logs.Add(new Log($"Admin: {userID} Logged Out", userID, true));
+                    UI.GeneralMenu();
+                }
+                else
+                {
+                    logs.Add(new Log($" Admin: {userID} Logged Out", userID, false));
+                    UI.throwError("Invalid Password...");
+                }
             }
 
             else
             {
-                UI.throwError("Invalid Password...");
+                if (inputPassword == clients[userID].password)
+                {
+                    UI.AnimateLogo(); UI.ProgressBar();
+                    UI.TypeLine($" {clients[userID].firstName} you have Successfully" +
+                        $" Logged out of your account");
+                    logs.Add(new Log($"Client: {userID} Logged Out", userID, true));
+                    UI.GeneralMenu();
+                }
+                else
+                {
+                    logs.Add(new Log($" Client: {userID} Logged Out", userID, false));
+                    UI.throwError("Invalid Password...");
+                }
             }
         }
 
@@ -108,7 +138,8 @@ namespace LMS
 
         public void listBooksInventory()
         {
-            foreach(Book book in books.Values)
+            UI.Escape(); UI.TypeLine($"======= HERE ARE ALL THE BOOKS IN THE INVENTORY ======", Color.DarkBlue); UI.Escape();
+            foreach (Book book in books.Values)
             {
                 string bookCondition = book.isBorrowed ? "Available" : "Borrowed";
                 UI.TypeLine($"ID {book.ID}", sleepTime: 20);
@@ -121,17 +152,22 @@ namespace LMS
                 UI.TypeLine(" || ", color: Color.Blue, sleepTime: 20);
                 UI.TypeLine($"Condition {bookCondition}", book.isBorrowed ? Color.Red : Color.Green, sleepTime: 20);
                 Console.WriteLine("----------------------------------------------------------", Color.Blue);
+                
             }
+
+            logs.Add(new Log($"{this.userID} Listed Books In Inventory", this.userID, true));
         }
 
 
         public void viewBook()
         {
-            UI.TypeLine("Enter the Book ID: ");
+
+            UI.TypeLine("Enter the Book ID: ", Color.Blue);
             string bookID = Console.ReadLine();
 
             if (books.ContainsKey(bookID))
             {
+                UI.Escape(); UI.TypeLine($"======= HERE ARE {bookID}'S DETAILS ======", Color.DarkBlue); UI.Escape();
                 UI.Load(times: new Random().Next(50, 150), displayMsg: "Getting Book from Inventory...", sequenceCode: 1);
                 UI.ProgressBar(displayMsg: "Loading Book Details....", interval: new Random().Next(100, 200));
                 Book book = books[bookID];

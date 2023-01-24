@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
 
 namespace LMS
 {
@@ -9,24 +10,31 @@ namespace LMS
     public class Client : User
     {
         public Dictionary<string, Book> borrowedBooks = new Dictionary<string, Book>();
-        public string userID { get; }
 
-        public Client(string firstName, string lastName, int age, string password) : base(firstName, lastName, age, password)
+        public Client(string firstName, string lastName, string age, string address, string password) : base(firstName, lastName, age, address, password)
         {
             this.userID = "CL" + Convert.ToString(new Random().Next(10000, 99999));
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.age = age;
+            this.address = address;
+            this.password = password;
         }
 
         public void displayPersonalDetails()
         {
+            
 
             string inputPassword = UI.getPassword();
             if (inputPassword == password)
             {
+                UI.Escape(); UI.TypeLine($"======= YOUR PERSONAL DETAILS ======", Color.DarkBlue); UI.Escape();
                 Console.WriteLine("----------------------------------------------------------", Color.Blue);
                 UI.TypeLine($"ID: {userID}\n");
                 UI.TypeLine($"Name: {firstName} {lastName}\n");
-                UI.TypeLine($"Age: {age}");
-                UI.TypeLine($"Password: {password}");
+                UI.TypeLine($"Age: {age}\n");
+                UI.TypeLine($"Address: {address}\n");
+                UI.TypeLine($"Password: {password}\n");
                 Console.WriteLine("----------------------------------------------------------", Color.Blue);
                 logs.Add(new Log($"Displayed Personal Account details", this.userID, true));
                 return;
@@ -40,10 +48,10 @@ namespace LMS
 
         public void requestABook()
         {
-            UI.TypeLine("Enter Book Name: ");
+            UI.TypeLine("Enter Book Name: ", Color.Blue);
             string bookName = Console.ReadLine();
 
-            UI.TypeLine("Enter Book Author: ");
+            UI.TypeLine("Enter Book Author: ", Color.Blue);
             string bookAuthor = Console.ReadLine();
 
             requestedBooks.Add(new Request(new Book(bookName, bookAuthor)));
@@ -54,12 +62,12 @@ namespace LMS
 
         public void borrowBook()
         {
-            UI.TypeLine("Enter the ID of the Book you wish to borrow from Aptech Library: ");
+            UI.TypeLine("Enter the ID of the Book you wish to borrow from Aptech Library: ", Color.Blue);
             string bookID = Console.ReadLine();
 
             if (borrowedBooks.ContainsKey(bookID))
             {
-                UI.TypeLine("In how many days do you wish to return our book? ");
+                UI.TypeLine("In how many days do you wish to return our book? ", Color.Blue);
                 int dueDays;
                 try
                 {
@@ -83,6 +91,7 @@ namespace LMS
                         return;
                     }
                     borrowedBooks.Add(bookID, books[bookID]);
+                    BorrowedBooks.Add(books[bookID]);
                     books[bookID].bookBorrowed(dueDays);
                     UI.ShowSuccess($"Book {bookID} borrowed successfully, \n Nice choice, I hope you enjoy reading this ;)");
 
@@ -108,7 +117,7 @@ namespace LMS
 
         public void returnBook()
         {
-            UI.TypeLine("Enter the ID of the Book you wish to return: ");
+            UI.TypeLine("Enter the ID of the Book you wish to return: ", Color.Blue);
             string bookID = Console.ReadLine();
 
             if (borrowedBooks.ContainsKey(bookID))
@@ -145,6 +154,7 @@ namespace LMS
 
         public void listBooksInPossession()
         {
+            UI.Escape(); UI.TypeLine($"======= HERE ARE THE BOOKS YOU HAVE ======", Color.DarkBlue); UI.Escape();
             foreach (Book book in borrowedBooks.Values)
             {
                 UI.TypeLine($"ID {book.ID}", sleepTime: 20);
@@ -156,7 +166,8 @@ namespace LMS
                 UI.TypeLine($"Registration TimeStamp: {book.regDateTime}", sleepTime: 20);
                 UI.TypeLine(" || ", color: Color.Blue, sleepTime: 20);
                 Console.WriteLine("----------------------------------------------------------", Color.Blue);
-
+                logs.Add(new Log($"Client {this.userID} Viewed Books In Possession", this.userID, true));
+                return;
             }
         }
     }
