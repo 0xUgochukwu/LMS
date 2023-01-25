@@ -25,7 +25,6 @@ namespace LMS
                 { "=>   ", "==>  ", "===> ", "====>" },
             };
         static int Delay { get; set; } = 200;
-
         static int totalSequences = sequence.GetLength(0);
         static int counter = 0;
 
@@ -125,7 +124,6 @@ namespace LMS
             Clear();
         }
 
-
         static public void Load2(int times, string displayMsg = "", int sequenceCode = 0)
         {
             Clear();
@@ -157,7 +155,6 @@ namespace LMS
             
         }
 
-
         public static void ProgressBar(string displayMsg = "", int interval = 20, Color? color = null)
         {
             string spaces = "                         ";
@@ -176,7 +173,7 @@ namespace LMS
                 if (i % 2 == 0) count++;
                 if (i % 4 == 0 && i != 100)
                 {
-                    loader += "+";
+                    loader += "#";
                     spaces = spaces.Remove(spaces.Length - 1);
                     
                 }
@@ -184,7 +181,6 @@ namespace LMS
 
             Clear();
         }
-
 
         public static string getPassword(bool needText = true)
         {
@@ -217,15 +213,12 @@ namespace LMS
 
             return inputPassword;
         }
-
-
         
         public static void throwError(string errorMsg)
         {
             TypeLine(errorMsg, color: Color.Red);
 
         }
-
 
         public static void ShowSuccess(string successMsg)
         {
@@ -238,7 +231,6 @@ namespace LMS
         {
             Console.WriteLine();
         }
-
 
         static public void passwordErr() {
             throwError("Invalid Password...");
@@ -382,7 +374,6 @@ namespace LMS
             }
         }
 
-
         public static void Greet(string name)
         {
             Escape();
@@ -478,7 +469,6 @@ namespace LMS
 
             }
         }
-
 
         public static void AdminMenu(Admin admin)
         {
@@ -641,8 +631,6 @@ namespace LMS
 
             }
         }
-
-
 
         public static void CreateAccount(bool isAdmin)
         {

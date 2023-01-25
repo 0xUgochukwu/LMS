@@ -20,7 +20,7 @@ namespace LMS
             this.password = password;
         }
 
-        public void displayPersonalDetails()
+        public override void displayPersonalDetails()
         {
             
             string inputPassword = UI.getPassword();

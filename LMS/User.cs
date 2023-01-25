@@ -199,6 +199,8 @@ namespace LMS
 
         }
 
+        abstract public void displayPersonalDetails();
+
 
     }
 

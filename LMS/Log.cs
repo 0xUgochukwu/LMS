@@ -8,6 +8,8 @@ namespace LMS
         public string timeStamp;
         public string actorID;
         public bool status;
+
+
         public Log(string logMessage, string actorID, bool status)
         {
             this.status = status;
