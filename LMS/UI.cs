@@ -48,7 +48,7 @@ namespace LMS
                 {"Harry Porter and Sorcere's Stone", "J.K Rowling"},
                 {"Robinson Crusoe", "Daniel Defoe"},
                 {"Gulliver's Travels", "Jonathan Smith"},
-                {"hings Fall Apart", "Chinua Achebe"},
+                {"Things Fall Apart", "Chinua Achebe"},
             };
 
 
