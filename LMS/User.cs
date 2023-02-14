@@ -13,13 +13,13 @@ namespace LMS
         public string userID;
         protected string password;
         public string address;
-        static public Dictionary<string, Admin> admins = new Dictionary<string, Admin>();
-        static public Dictionary<string, Client> clients = new Dictionary<string, Client>();
-        static public Dictionary<string, Book> books = new Dictionary<string, Book>();
-        static public List<Book> BorrowedBooks = new List<Book>();
-        static public Dictionary<string, Client> restrictedClients = new Dictionary<string, Client>();
-        static public List<Request> requestedBooks = new List<Request>();
-        static public List<Log> logs = new List<Log>();
+        public static Dictionary<string, Admin> admins = new Dictionary<string, Admin>();
+        public static Dictionary<string, Client> clients = new Dictionary<string, Client>();
+        public static Dictionary<string, Book> books = new Dictionary<string, Book>();
+        public static List<Book> BorrowedBooks = new List<Book>();
+        public static Dictionary<string, Client> restrictedClients = new Dictionary<string, Client>();
+        public static List<Request> requestedBooks = new List<Request>();
+        public static List<Log> logs = new List<Log>();
 
 
         public User(string firstName, string lastName, string age, string address, string password)
